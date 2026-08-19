@@ -1,0 +1,97 @@
+CC0-A3 FIRST WEBCAM LOCAL SPECTRAL FIELD RECEIPT
+========================================================================
+source                    : webcam camera 0
+frames                    : 335
+steady steps              : 334
+analysis width            : 128
+grid                      : 6 x 8
+wavelengths               : 4, 6.5, 10, 15.5, 24, 36
+orientations              : 0, 45, 90, 135 degrees
+spectral tolerance        : 0.35
+tile tolerance            : 0.08
+
+RAW SUMMARY
+------------------------------------------------------------------------
+raw change rate           : 1.000000
+spectral packet wake frac : 0.058144
+spectral spatial fanout   : 0.301148
+plain tile wake frac      : 0.062157
+any spectral rate         : 0.850299
+cross-scale agreement     : 0.879239
+mean bundle count         : 4.707
+largest bundle share      : 0.548387
+
+WAKE-TRACE DERIVED CHECKS
+------------------------------------------------------------------------
+mean spectral packets woken/frame : 66.982 / 1152
+median spectral packets/frame     : 10
+90th percentile packets/frame     : 251.7
+mean spectral spatial cells/frame : 14.455 / 48
+
+mean tile states woken/frame       : 5.967 / 96
+mean tile spatial cells/frame      : 4.671 / 48
+tile spatial fanout                : 0.097305
+
+spectral spatial fanout / tile spatial fanout : 3.095x
+
+per-scale spectral wake fractions:
+  wavelength 4.0     : 0.049183
+  wavelength 6.5     : 0.052957
+  wavelength 10.0    : 0.055763
+  wavelength 15.5    : 0.064044
+  wavelength 24.0    : 0.067053
+  wavelength 36.0    : 0.059865
+
+orientation wake fractions:
+  0 deg       : 0.056159
+  45 deg      : 0.064600
+  90 deg      : 0.056554
+  135 deg     : 0.055264
+
+adjacent-scale orientation-collapsed wake Jaccard:
+  4 -> 6.5      : 0.4817
+  6.5 -> 10     : 0.4547
+  10 -> 15.5    : 0.4666
+  15.5 -> 24    : 0.4869
+  24 -> 36      : 0.4599
+
+conditional adjacent-scale overlap is roughly 0.60 -> 0.68 depending direction/pair.
+
+IMPORTANT INSTRUMENT FLAW FOUND AFTER RUN
+------------------------------------------------------------------------
+A3 normalized every spectral channel by that frame's own spatial q95.
+That creates a hidden global dependency: a local event can change q95 and
+therefore rescale every spatial cell in the channel. This can artificially
+inflate spatial routing fanout. The tile edge channel used a similar framewise
+normalization, though only for one of its two channels.
+
+Therefore:
+- the A3 run is preserved as a useful first receipt;
+- the precise spectral-vs-tile routing fanout result is NOT final;
+- A3B removes framewise global renormalization by freezing per-channel scales
+  from the first frame and reports tile spatial fanout explicitly.
+
+INTERPRETATION
+------------------------------------------------------------------------
+Positive:
+- raw sensor changed every frame while only 5.8% of spectral packet states
+  crossed their cache boundary on average;
+- adjacent scales show strong observation agreement and substantial wake-map
+  overlap;
+- active scale-space structure is clustered into only a few bundles, with the
+  largest bundle containing about 55% of active scale-space cells on average.
+
+Negative / attacker:
+- at A3 thresholds, spectral packet sparsity did not translate into superior
+  spatial routing locality: spectral touched ~30.1% of spatial cells vs ~9.7%
+  for plain tiles;
+- spectral representation is 12x larger in state count (1152 vs 96), so the
+  number of individual state updates is much larger despite similar wake
+  fractions;
+- thresholds are not yet matched by task error / false-miss rate.
+
+STATUS
+------------------------------------------------------------------------
+A3: informative but normalization-confounded.
+A3B fixed-normalization rerun: NEXT.
+No runtime speedup claim.
