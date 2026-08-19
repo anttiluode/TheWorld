@@ -28,7 +28,7 @@ localized quadrature Gabor bank
     ↓
 6 × 8 spatial pooling lattice
     ↓
-960 localized spectral packets
+1152 localized spectral packets
     ↓
 independent cached consequence per packet
     ↓
