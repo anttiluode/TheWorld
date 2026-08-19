@@ -1,0 +1,41 @@
+THEWORLD — MASS/PULSE CHASE — 2026-08-19
+
+GATE MP1 — travelling event sheet, 12 sensors
+==============================================================
+exp     structured delays: train=0.99875  test=0.99713  internal_parameter=1.6883
+linear  structured delays: train=0.99925  test=0.99862  internal_parameter=2.6959
+window  structured delays: train=0.99950  test=0.99925  internal_parameter=1.2816
+window  NO delays        : test=0.50887
+window  SHUFFLED delays  : mean=0.63446  sd=0.10593  best=0.87813
+
+Verdict:
+- exponential local mass is not required for this first geometry x time task;
+- linear leak is enough;
+- a finite coincidence window is slightly better and cheaper;
+- structured delay assignment is load-bearing;
+- this is an intentionally favorable built-in prior, not a learned architecture win.
+
+
+GATE MP2 — price the rotating/phase state
+==============================================================
+one scalar relaxer -> exp(-0.2 t) RMSE: 0.000e+00
+damped cosine target has 14 sign changes over [0,20]
+
+real scalar-decay bank approximating damped cosine:
+K= 1: RMSE=0.322197   max|coefficient|=2.97e-03
+K= 2: RMSE=0.299493   max|coefficient|=1.67e+00
+K= 4: RMSE=0.296727   max|coefficient|=2.18e+00
+K= 8: RMSE=0.260116   max|coefficient|=2.51e+01
+K=16: RMSE=0.211091   max|coefficient|=9.23e+03
+K=32: RMSE=0.207509   max|coefficient|=5.53e+03
+K=64: RMSE=0.203992   max|coefficient|=5.01e+03
+
+one 2-state rotation/decay block: RMSE=0.000e+00
+
+Verdict:
+- scalar relaxation is the cheap primitive for monotone/fading history;
+- a 2-D rotation-decay block is the compact primitive for a genuine oscillatory mode;
+- the block matrix decomposes as M=-alpha*I + omega*J with J skew-symmetric;
+- this gives phase/rotation a specific resource bill instead of making it universal.
+
+These are mechanism gates and known-mathematics illustrations, not novelty claims.
