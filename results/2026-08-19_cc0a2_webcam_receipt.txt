@@ -1,0 +1,36 @@
+CC0-A2 WEBCAM INVALIDATION CENSUS
+========================================================================
+session                   : 20260819_182554
+camera index              : 0
+frames                    : 297
+steady steps              : 296
+tolerance scale           : 0.35
+raw MAE threshold         : 0.0005
+raw input change rate     : 1.000000
+ANY receiver change rate  : 0.422297
+receiver slot wake frac   : 0.158170
+GLOBAL-OR/local ratio     : 2.670x (equal receiver cost; oracle opportunity only)
+
+receiver wake rates:
+  global_edge        0.050676   tol=0.005250
+  bottom_edge        0.084459   tol=0.007000
+  light_centroid     0.101351   tol=0.007000
+  right_motion       0.131757   tol=0.012250
+  bottom_motion      0.148649   tol=0.012250
+  right_gist         0.162162   tol=0.012250
+  periphery_gist     0.172297   tol=0.010500
+  left_motion        0.185811   tol=0.012250
+  left_gist          0.222973   tol=0.012250
+  global_gist        0.229730   tol=0.010500
+  center_gist        0.250000   tol=0.012250
+
+WARNING:
+Dense receiver outputs were computed on every frame.
+This receipt measures skip opportunity, not runtime speedup.
+
+Interpretation:
+- raw sensor stream changed on every steady-state frame under the chosen raw threshold;
+- receiver-local invalidation remained substantially sparser;
+- equal-cost GLOBAL-OR would execute 2.67x as much receiver work as the oracle local invalidation pattern;
+- this is a first real external webcam receipt, but it is short and has not yet been tolerance-swept;
+- CC0-B remains blocked pending stronger routing/locality evidence and fair attackers.
