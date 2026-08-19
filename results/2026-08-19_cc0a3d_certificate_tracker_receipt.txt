@@ -1,0 +1,124 @@
+CC0-A3D CERTIFICATE TRACKER — FROZEN WEBCAM RECEIPT
+========================================================================
+Date/session: 2026-08-19 / 20260819_202218
+Source: webcam camera 0
+Frames: 193 (192 steady steps)
+Analysis grid: 6 x 8
+Spectral bank: 6 wavelengths x 4 orientations
+Spectral tolerance: 0.35
+Tile tolerance: 0.08
+
+FRONT-END / LOCALITY
+------------------------------------------------------------------------
+raw change rate                         1.000000
+spectral packet wake fraction           0.029093
+spectral spatial routing fanout         0.247396
+>=2-scale certificate current fanout    0.137261
+plain tile current fanout               0.060221
+cross-scale observation agreement       0.904626
+mean scales per active spectral cell    1.499587
+multi-scale share among active cells    0.334094
+
+A3C PERSISTENCE REPLICATION INSIDE THIS RUN
+------------------------------------------------------------------------
+Future local wake within +/-1 spatial cell:
+
+lag     single-scale     multi-scale     delta        plain tile
+1f       0.858696         0.920030       +0.061335      0.686047
+2f       0.801383         0.867479       +0.066096      0.647841
+4f       0.705242         0.806550       +0.101308      0.544850
+8f       0.716904         0.798757       +0.081853      0.601695
+
+This is the second webcam run in which >=2-scale wake predicts greater future local wake than single-scale wake across all tested lags.
+
+IMPORTANT NON-MONOTONICITY
+------------------------------------------------------------------------
+The stronger statement 'more scales is always better' is NOT supported.
+At 1 frame in this run:
+
+m=1   0.8587
+m=2   0.9362
+m=3   0.9515
+m=4   0.9840
+m=5   0.9922
+m=6   0.6194
+
+The all-six-scale class behaves differently and must be attacked separately rather than folded into a monotonic-confidence story.
+
+A3D PERSISTENT TRACKER
+------------------------------------------------------------------------
+                              certificate       tile attacker
+current evidence fanout          0.137261          0.060221
+belief fanout                    0.209852          0.125434
+held-only fanout                 0.072591          0.065213
+receiver WAKE fraction           0.399598          0.437751
+mean track age (frames)         13.105            16.600
+max track age                   39                55
+tracks created                  38                30
+tracks expired                  37                29
+reacquired                      53                66
+
+TRACK EVENT COUNTS
+------------------------------------------------------------------------
+certificate:
+  NEW        38
+  UPDATE     71
+  REACQUIRE  53
+  REUSE      39
+  HOLD      260
+  EXPIRE     37
+  downstream-WAKE events (NEW+UPDATE+REACQUIRE+EXPIRE) = 199
+
+tile:
+  NEW        30
+  UPDATE     93
+  REACQUIRE  66
+  REUSE      17
+  HOLD      263
+  EXPIRE     29
+  downstream-WAKE events (NEW+UPDATE+REACQUIRE+EXPIRE) = 218
+
+INTERPRETATION
+------------------------------------------------------------------------
+1. Cross-scale multiplicity as a persistence signal survives a second real webcam run.
+2. Naive spectral representation still does NOT win as a spatial router: the >=2-scale certificate touches ~2.28x as many current spatial cells as the plain tile event mask in this run.
+3. The certificate tracker produced a modestly lower downstream WAKE fraction than the tile tracker (0.400 vs 0.438; about 8.7% relative reduction), with more REUSE and fewer UPDATE/REACQUIRE events.
+4. That modest event saving came with materially larger belief fanout (~1.67x tile) and shorter mean track lifetime. Certificate tracking also had more create/expire churn.
+5. Therefore A3D is a MIXED result, not an architecture win.
+6. HOLD remains belief/state, not sensory support. The held-only footprint is explicitly billed.
+
+CURRENT BEST INTERPRETATION
+------------------------------------------------------------------------
+Do not make the full Gabor field the runtime body.
+
+The evidence points instead toward a separation:
+
+  cheap spatial event stream  -> candidate ADDRESS / routing
+  cross-scale agreement       -> persistence / validity CERTIFICATE
+  local track state           -> persistent BELIEF / consequence
+  consequence change          -> downstream WAKE
+
+The spectral/multiscale machinery may be better used as a certificate, verifier, or teacher than as the primary routing representation.
+
+NEXT HARD GATE
+------------------------------------------------------------------------
+A3E / CC0-B candidate:
+
+  plain tile/raw-delta router
+      -> small candidate cell set (+ fixed neighborhood)
+      -> run multiscale verifier ONLY on candidate cells
+      -> compare to dense multiscale teacher
+      -> persistent local state with evidence/support separated from HOLD
+      -> measure certificate recall, false misses, candidate fanout, front-end CPU time, receiver WAKEs, belief fanout
+
+Mandatory attackers:
+  tile-only tracker
+  dense spectral certificate tracker
+  global/dense Gabor bank
+  simple image-pyramid / DoG multiscale certificate
+
+Kill if local spectral verification does not preserve dense-certificate recall at materially lower actual wall time, or if a simple multiscale spatial pyramid gives the same persistence signal more cheaply.
+
+WARNING
+------------------------------------------------------------------------
+Dense Gabor/tile front ends still ran every frame in A3D. This is not a runtime speedup measurement and not evidence for a cortical mechanism.
