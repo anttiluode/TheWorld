@@ -1,378 +1,268 @@
 # TheWorld — current handoff
 
 **Date:** 2026-08-19  
-**State:** observer geometry + anchored-world bookkeeping + minimal material runtime + receiver-specific realization. No novelty claim yet.
+**State:** observer geometry + anchored-world bookkeeping + minimal material runtime have collided with older repo results. The main line is now **receiver-aware self-adjusting execution / compile the math out of the hot loop**. No novelty claim.
+
+For the full current synthesis see:
+
+- `notes/009_compile_math_out_of_hot_loop.md`
+- `HANDOFF_2026-08-19_COMPILE_HOT_LOOP.md`
+
+The previous FLOW/JUMP + minimal-realization state is preserved in `HANDOFF_2026-08-19_FLOW_JUMP_RECEIVER_REALIZATION.md`.
+
+---
 
 ## One-line state
 
-> **Treat the world as a rich persistent dynamical state. Different receivers induce different observation geometries and may need very different amounts of dynamical state. Identify the smallest useful realization for each receiver, compile it into the cheapest local causal primitives, and keep external-support/provenance bookkeeping separate from prediction.**
-
-For full details of the newest turn see `HANDOFF_2026-08-19_FLOW_JUMP_RECEIVER_REALIZATION.md`.
+> **Keep a rich learned machine persistent; reuse consequences while they remain valid; touch only locally discoverable causal frontiers; wake only receivers whose distinguishable world changed; and execute the smallest cheap realization those receivers actually need.**
 
 ---
 
-## 1. Observer geometry still stands
+## What the repo archaeology changed
 
-Receiver `i` observes a richer state `x` through
+The latest “minimal neuron” ideas were not one new mechanism. They decomposed into four older measured lines:
+
+```text
+TheClutch2 / Fusion1
+    validity sparsity
+    -> don't recompute while a cached consequence remains usable
+
+DifferentMachine
+    causal-frontier sparsity
+    -> don't execute quiet/unreached state
+
+SplatNeuron / observer geometry
+    receiver sparsity
+    -> don't preserve or communicate distinctions this receiver cannot use
+
+KYY / TWC / FunctionalArbors / ArborVerb / Note 008
+    operator lowering
+    -> don't execute a general model when a cheaper realization suffices
+```
+
+The next experiment must combine these and pay for the control plane rather than re-proving one piece in isolation.
+
+---
+
+## Receiver-relative invalidation
+
+For receiver
 
 \[
-y_i=h_i(x)+\epsilon_i,
-\qquad \epsilon_i\sim\mathcal N(0,R_i).
+y_i=h_i(x),
 \]
 
-Local differential:
+and local state change `delta x`,
 
 \[
-J_i=Dh_i(x).
+\delta y_i \approx J_i\delta x,
+\qquad J_i=Dh_i(x).
 \]
 
-Receiver-specific information metric:
+The runtime implication is:
+
+> **A changed dependency does not necessarily invalidate a receiver consequence.**
+
+Large motion near `ker(J_i)` can leave receiver `i` effectively unchanged. Small motion along a sensitive direction can invalidate it immediately.
+
+Approximate receiver equivalence:
 
 \[
-G_i=J_i^TR_i^{-1}J_i.
+x_1\sim_{i,\epsilon}x_2
+\iff
+\|h_i(x_1)-h_i(x_2)\|\le\epsilon_i.
 \]
 
-Interpretation:
+A cached output may sleep while the world remains inside that tolerance region.
+
+This is the bridge between the observer-atlas mathematics and incremental computation.
+
+---
+
+## The guard has to be cheaper than waking
+
+Candidate runtime:
 
 ```text
-ker(G_i)      world changes locally invisible to receiver i
-eigenvectors  distinguishable directions
-eigenvalues   strength of that distinguishability
+cheap certificate says safe     -> REUSE
+certificate uncertain           -> PROBE
+receiver consequence changed    -> local WAKE
+local model no longer trusted   -> full REFRESH / teacher
 ```
 
-Globally, the receiver defines an equivalence relation
+Possible guards include local ids, spatial hashes, coarse bounding volumes, low-rank sensitivity sketches, small learned classifiers or domain-specific probes.
+
+Do **not** assume Jacobians are cheap. They are an analysis/teacher instrument unless they actually win the runtime bill.
+
+---
+
+## Whole-system cost
+
+Any speed claim must pay for:
+
+```text
+change detection
+candidate discovery
+routing / queues
+metadata / indices
+local state updates
+receiver computation
+teacher refreshes
+memory traffic
+synchronization
+recovery after drift
+```
+
+A useful shorthand is
 
 \[
-x_1\sim_i x_2 \iff h_i(x_1)=h_i(x_2).
+C_t=C_{detect}+C_{route}+C_{metadata}+C_{frontier}
++\sum_i I_i C_i+I_{refresh}C_{teacher}.
 \]
 
-So `each unit knows a little piece of the world` is too crude. A receiver partitions possible worlds according to the distinctions its interface preserves.
+If this is not below a strong ordinary implementation at matched quality, the architecture loses.
 
 ---
 
-## 2. Confidence is not observability
+## Prior-art boundary
 
-Keep separate:
-
-```text
-Lambda_belief   total posterior/model precision
-A_ext           directional support actually earned from external observation
-```
-
-A learned prior can make belief sharp where external support is weak.
-
-Candidate directional anchor ratio:
-
-\[
-r(v)=\frac{v^TA_{ext}v}{v^T\Lambda_{belief}v+\epsilon}.
-\]
-
-Weak generalized-eigenvalue directions identify places where confidence outruns external evidence.
-
-Also track:
+Do not claim invention of:
 
 ```text
-source lineage
-intervention lineage
+memoization / incremental computation
+self-adjusting computation
+change propagation
+delta / temporal-sparse inference
+conditional computation
+model reduction / balanced truncation
+knowledge distillation
+event-driven SSM/RNN execution
 ```
 
-because evidence may be externally measured yet still partly generated by the model's own prior-driven intervention.
+The unearned engineering question is the **joint compiler/runtime**:
 
-Epistemic anchoring and receiver compression are orthogonal. A one-state receiver can still be confidently wrong.
+```text
+rich teacher
+ -> receiver maps
+ -> cheap receiver-validity guards
+ -> locally discoverable causal frontier
+ -> reduced/cheap realizations
+ -> sparse execution
+ -> occasional full refresh
+```
+
+with honest end-to-end resource accounting.
 
 ---
 
-## 3. Below the maths
+# Main next gate — CC0
 
-The physical/artificial substrate need not symbolically evaluate the mathematics used to analyze it.
+`MP3 primitive auction` is demoted to a component test.
 
-Runtime can be local:
+## CC0 — Compiled Consequence Gate 0
 
-```text
-wait
-receive event
-change local state
-route a consequence
-emit if a condition is met
-```
+Question:
 
-An external analyst may later describe that same behavior using:
+> **Can receiver-relative invalidation plus persistent local state avoid real work at matched task quality after paying for detection, routing, metadata and refresh?**
 
-```text
-Laplace coordinates
-state-space poles
-Hankel spectra
-observability metrics
-skew operators
-eigenmodes
-```
+### First substrate
 
-Key design principle:
+Prefer `NeuromorphicDVSplusEMDfield` as the immediate real-stream instrument because image/event coordinates provide world-supplied locality.
 
-> **Do not make the computer repeatedly calculate a difficult relation if cheap local state and routing can make the relation arrive as an event/coincidence.**
+### Second substrate
 
----
+After the current WorldSplat ray-fix finishes, use the learned scene/world state as a rich teacher. Do not modify the running training gate.
 
-## 4. Mass–Pulse was narrowed to FLOW/JUMP
+### First receivers
 
-The first minimal-neuron sketch used local exponential `mass` plus delayed pulses.
-
-Gate MP1 removed exponential state from the first geometry×time task.
-
-Held-out travelling-sheet result:
+Use narrow consequences rather than full RGB:
 
 ```text
-EXP + structured delays       0.99713
-LINEAR + structured delays    0.99862
-WINDOW + structured delays    0.99925
-
-WINDOW + no delays            0.50887
-WINDOW + shuffled delays      0.63446 mean
-```
-
-So the universal primitive is lower than `leaky mass`.
-
-Current causal ISA:
-
-```text
-FLOW(dt)       silent local evolution; may be empty
-JUMP(event)    event-triggered local transition
-ROUTE(delay)   geometry / propagation
-EMIT(test)     sparse outward event
-ADAPT          optional slow material change
-```
-
-Primitive price list:
-
-```text
-DELAY(d)
-WINDOW(w)
-RELAX(alpha)           one scalar real mode
-RESOURCE(alpha,jump)   extra history-dependent state
-ROTATE(alpha,omega)    two-state damped rotational mode
-THRESHOLD(theta)
-RESET / REFRACT
-ADAPT
-```
-
-Every primitive must earn its cost.
-
----
-
-## 5. Clean runtime bill for phase / rotation
-
-One scalar relaxer represents one real decaying mode exactly.
-
-A two-state block
-
-\[
-\dot q=(-\alpha I+\omega J)q,
-\qquad J^T=-J,
-\]
-
-represents one damped rotational mode exactly.
-
-Executed target: damped cosine with 14 sign changes.
-
-```text
-real scalar-decay bank
-K=1    RMSE .322197
-K=8    RMSE .260116
-K=16   RMSE .211091
-K=64   RMSE .203992
-
-one 2-state rotation/decay block
-       RMSE 0
-```
-
-Interpretation:
-
-> **One scalar state buys relaxation. Two coupled states buy genuine rotation.**
-
-This is a narrower, cleaner descendant of the old Geometric-Neuron `phase must pay its bill` program.
-
-Do not pay for `ROTATE` to store ordinary fading history. Use it only when the local/receiver temporal operator genuinely contains oscillatory or cyclic structure.
-
----
-
-## 6. New core: receiver-specific minimal realization
-
-For local linear dynamics
-
-\[
-x_{t+1}=Ax_t+Bu_t,
-\qquad y_i=C_i x_t,
-\]
-
-impulse response:
-
-\[
-h_k=C_iA^kB.
-\]
-
-The Hankel matrix built from `h_k` measures the dynamic input→receiver structure. Under the standard exact finite-dimensional LTI conditions, Hankel rank equals minimal realization order.
-
-Thus the dynamic SplatNeuron sentence is:
-
-> **A receiver only needs the smallest dynamical realization that preserves the consequences of the richer world that can actually reach that receiver.**
-
-Executed six-state toy:
-
-```text
-same 6-state world
-
-slow-only receiver          rank 1
-oscillation-only receiver   rank 2
-fast-only receiver          rank 1
-mixed receiver              rank 6
-```
-
-Leading mixed spectrum:
-
-```text
-[8.417, 2.634, 2.404, 0.508, 0.300, 0.054]
-```
-
-This is expected realization theory. The important part is that `receiver world size` is now measurable rather than metaphorical.
-
-For noisy/nonlinear learned systems use effective Hankel singular spectra / approximate degree, not brittle exact rank.
-
----
-
-## 7. Candidate receiver compiler
-
-Identify/learn receiver transfer behavior, then factor/approximate it into cheap runtime blocks:
-
-```text
-instantaneous feedthrough       -> JUMP/direct read
-real stable pole                -> RELAX
-complex-conjugate pole pair     -> ROTATE
-explicit propagation delay      -> ROUTE/DELAY
-finite coincidence condition    -> WINDOW
-history-dependent local gain    -> RESOURCE
-```
-
-Only add more nonlinearity if the cheaper blocks fail.
-
-This is system identification/model reduction + event execution; individual ingredients are established.
-
-The engineering claim to earn is whether heterogeneous compilation traces a better accuracy/state/communication/runtime frontier than homogeneous recurrent/SSM baselines.
-
----
-
-## 8. Wide Present refinement
-
-A receiver's temporal present has at least two axes:
-
-```text
-H_i       useful temporal horizon
-r_i(H)    effective dynamical degree needed across that horizon
-```
-
-So the present is not just a buffer length.
-
-Candidate sentence:
-
-> **The present is the temporal horizon over which past state remains causally useful, together with the number of dynamical distinctions that must survive across that horizon for this receiver.**
-
----
-
-## 9. WorldSplat bridge
-
-Do not retrofit the current WorldSplat trainer with this machinery.
-
-After the ray-fix experiment is finished, use the learned world as the rich substrate and define task receivers:
-
-```text
-RGB reconstruction
-depth summary
-motion
 near-field collision
-navigation
+left/right motion
 object continuity
+route-relevant obstacle state
 ```
 
-Measure empirical receiver-specific dynamic spectra.
-
-A meaningful receipt would be something like:
+### Mandatory attackers
 
 ```text
-RGB receiver          high effective degree
-collision receiver    very low degree
-motion receiver       intermediate
+FULL every step
+make/dependency invalidation
+raw-delta threshold
+global Clutch gate
+tiny always-on GRU / SSM / MLP
+serious delta/incremental baseline where architecture permits
+receiver-aware compiled runtime
 ```
 
-Then compile only the cheap receivers into FLOW/JUMP bodies.
+### Measure
 
-If all receiver spectra remain broad/full, the cheap-observer story loses.
+```text
+task error / critical misses
+teacher wake fraction
+local update fraction
+messages/events processed
+persistent state bytes
+index/metadata bytes
+CPU wall time
+GPU wall time when relevant
+latency distribution
+forced-drift recovery cost
+```
 
-Keep the separate anchored-world question alive: predicted depth is not the same thing as externally measured depth.
+### Kill lines
+
+- FLOPs improve but wall time loses after routing/memory -> **LOSE**.
+- Tiny always-on model is faster at same quality -> **LOSE**.
+- Conventional incremental/delta baseline matches it more simply -> keep baseline; architecture claim **LOSES**.
+- Receiver-aware wake rate is not materially below raw world/input change rate -> receiver quotient provides no useful runtime sparsity here.
 
 ---
 
-## 10. Next actual build — MP3 primitive auction
+## WorldModel epistemic side remains separate
 
-Give the learner explicit resource prices:
+The anchored-world code currently has source categories for sensor, independent model, teacher prior and self-prediction.
 
-\[
-L=L_{task}
-+\lambda_s N_{states}
-+\lambda_e N_{eventops}
-+\lambda_c N_{communicated\ events}.
-\]
-
-Task families:
+Note 006 identified the missing active-agent distinction:
 
 ```text
-coincidence      -> predicted DELAY/WINDOW
-recency          -> predicted RELAX
-history context  -> predicted RESOURCE
-oscillation      -> predicted ROTATE
+exogenous measurement
+active-sensing measurement
+intervention-mediated measurement
+recursive prediction
 ```
 
-Mandatory matched attackers:
+That is worth implementing later, but it is not the speed mechanism.
+
+Keep the two ledgers separate:
 
 ```text
-compact GRU
-compact LSTM
-small TCN
-small diagonal/structured SSM
-point-spiking baseline
+How much work did I avoid?
+How independently was this belief earned?
 ```
-
-Runtime must eventually be measured on:
-
-```text
-dense PyTorch
-batched sparse GPU
-CPU event runtime
-```
-
-Operation count is not GPU speed.
 
 ---
 
-## 11. Carry-forward stack
+## What “skip the maths” now means
+
+Not “no mathematics.”
+
+It means:
 
 ```text
-rich persistent world
-        ↓
-receiver-specific observation geometry
-        ↓
-receiver-specific temporal consequence map
-        ↓
-effective Hankel spectrum / dynamic degree
-        ↓
-compile to cheapest FLOW/JUMP primitives
-        ↓
-sparse causal execution
-
-parallel ledger:
-belief vs external support + source/intervention lineage
+pay expensive learning/identification occasionally
+compile useful consequences into persistent state/structure
+leave them resident while valid
+route only receiver-relevant innovations
+execute only the cheap realization needed locally
+wake the expensive teacher when the certificate fails
 ```
 
-Strongest sentence:
+The mathematics still describes and trains the machine. The hot loop may execute far less of it.
 
-> **A neuron-like artificial element need not calculate the mathematical operator we use to describe it. A tiny local causal program can have that operator as its input/output behavior, while each receiver carries only the smallest dynamical realization needed to preserve the consequences of the richer world that matter to it.**
+---
 
-Do not hype. Do not lie. Keep attacking.
+## Carry-forward sentence
+
+> **Compile the expensive relationship once; keep its useful consequence resident; wake only the receivers whose distinguishable world actually changed; and make the proof that they can sleep cheaper than waking them.**
