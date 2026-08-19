@@ -1,0 +1,36 @@
+CC0-A3B FIXED-NORMALIZATION LOCAL SPECTRAL FIELD
+========================================================================
+source                         : webcam camera 0
+frames                         : 203
+steady steps                   : 202
+analysis width                 : 128
+grid                           : 6 x 8
+wavelengths                    : 4, 6.5, 10, 15.5, 24, 36 px
+orientations                   : 0, 45, 90, 135 deg
+spectral tolerance             : 0.35
+tile tolerance                 : 0.08
+raw threshold                  : 0.0005
+
+raw change rate                : 1.000000
+spectral packet wake fraction  : 0.041860
+spectral spatial fanout        : 0.285272
+plain tile wake fraction       : 0.085963
+plain tile spatial fanout      : 0.141399
+any spectral wake rate         : 0.950495
+cross-scale agreement          : 0.853757
+mean bundle count              : 5.707921
+largest bundle share           : 0.605402
+
+normalization:
+  FIXED first-frame q95 per spectral (scale,orientation) channel
+  FIXED first-frame q95 for tile edge channel
+
+Interpretation:
+- removing A3's framewise global q95 did not remove the cross-scale structure;
+- spectral packet-state invalidation remained sparse (~4.2%) but spatial routing fanout remained broader than the plain tile attacker (~28.5% vs ~14.1%);
+- therefore individual Gabor packets are not yet a spatial-routing win;
+- the surviving candidate is cross-scale multiplicity/bundle structure as a possible persistence/validity certificate;
+- CC0-A3C directly tests whether multi-scale wake predicts future local wake better than single-scale wake.
+
+WARNING:
+Dense Gabor and tile analyzers still run every frame. These are opportunity/locality measurements, not runtime speedups.
