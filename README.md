@@ -51,6 +51,7 @@ The word *subspace* is deliberately not used globally. A nonlinear observation m
 ### 5. Receiver-aware incremental runtime
 
 - `notes/009_compile_math_out_of_hot_loop.md` — cross-repo synthesis: validity sparsity + causal-frontier sparsity + receiver sparsity + operator lowering; receiver-relative invalidation; full runtime cost bill; CC0.
+- `notes/010_invalidation_or_catastrophe.md` — why one global change gate collapses as a large world grows; receiver-local validity scaling; CC0-A invalidation sparsity census.
 - `HANDOFF_2026-08-19_COMPILE_HOT_LOOP.md` — current detailed handoff and prior-art collision.
 - `HANDOFF_CURRENT.md` — rolling current state.
 
@@ -121,6 +122,38 @@ The current job is not to re-prove these independently. It is to combine them an
 
 ---
 
+## Why one global gate is not enough
+
+Suppose `R` receivers each become invalid with probability `p` on a step.
+
+A single global gate that wakes everything whenever **any** receiver changes has wake probability
+
+```text
+1 - (1-p)^R
+```
+
+under the simple independent toy assumption.
+
+As `R` grows, that approaches `1` even when each individual receiver changes rarely.
+
+Example:
+
+```text
+R = 100
+p = .01
+
+ANY receiver invalid     ≈ 63.4% of steps
+one receiver on average  = 1% of steps
+```
+
+So a large world can be almost never globally quiet while most receiver consequences remain locally valid.
+
+This makes the `DifferentMachine` constraint load-bearing: receiver invalidations must be routed to a small candidate set without scanning all receivers.
+
+See `notes/010_invalidation_or_catastrophe.md`.
+
+---
+
 ## House rules
 
 Keep these distinctions separate:
@@ -140,9 +173,32 @@ A compelling internal world is allowed to be wrong. A tiny receiver is allowed t
 
 `CC0 — Compiled Consequence Gate 0`
 
-Question:
+Before implementing the full runtime, run:
 
-> **Can receiver-relative invalidation plus persistent local state avoid real work at matched task quality after paying for detection, routing, metadata and refresh?**
+### `CC0-A — invalidation sparsity census`
+
+On a real changing stream:
+
+```text
+run the rich teacher offline on every step
+choose several narrow receivers
+record their true consequences
+set task-meaningful tolerances
+mark which receivers actually become invalid each step
+measure global-any vs per-receiver vs cluster invalidation
+```
+
+Only proceed if:
+
+```text
+global world/input changes often
+BUT
+most receiver consequences remain valid most of the time
+AND
+an event invalidates only a small receiver cluster
+```
+
+If that opportunity exists, then `CC0-B` learns/derives cheap guards and routing that approximate the oracle invalidation matrix without running the teacher.
 
 Immediate candidate substrate: `NeuromorphicDVSplusEMDfield`, where locality comes from real image/event coordinates.
 
@@ -190,6 +246,8 @@ Do not claim invention of memoization, self-adjusting/incremental computation, c
 The candidate contribution to earn is narrower: a joint compiler/runtime that discovers receiver-specific validity, locally discoverable causal frontiers and cheap realizations, then demonstrates a real accuracy–latency–memory/energy frontier advantage over strong ordinary baselines.
 
 ---
+
+> **A large world is almost never globally unchanged. The scalable question is whether most individual receivers remain valid, and whether the few invalidated receivers can be found without scanning the rest.**
 
 > **Compile the expensive relationship once; keep its useful consequence resident; wake only the receivers whose distinguishable world actually changed; and make the proof that they can sleep cheaper than waking them.**
 
