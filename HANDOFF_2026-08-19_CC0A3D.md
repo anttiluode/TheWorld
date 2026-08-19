@@ -1,80 +1,291 @@
-# TheWorld handoff — CC0-A3D persistent certificate tracker
+# HANDOFF — 2026-08-19 — CC0-A3D
 
-**Date:** 2026-08-19
+## State in one sentence
 
-## Current state
+> **Cross-scale agreement survived as a local persistence signal, but the dense spectral field did not earn itself as the runtime body; the architecture should now separate cheap routing from richer persistence certification.**
 
-A3C produced the first positive cross-scale persistence receipt on a real webcam stream. Multi-scale (`>=2` scales) wake predicted future local wake better than one-scale wake at 1/2/4/8 frames, while the plain tile baseline remained spatially sharper.
+## What was built today
 
-Therefore the spectral-packet-as-router story remains demoted. The active question is now:
-
-> **Can a multi-scale certificate be collapsed into a small persistent local state whose downstream receiver mostly REUSEs/HOLDs and only WAKEs on meaningful changes?**
-
-## A3D
-
-Files:
+The CC0 line progressed through:
 
 ```text
+CC0-A1  encoded-video invalidation opportunity census
+CC0-A2  real webcam receiver invalidation census
+CC0-A3  localized 6-scale x 4-orientation spectral field + tile attacker
+CC0-A3B fixed-normalization repair
+CC0-A3C cross-scale multiplicity -> future persistence test
+CC0-A3D persistent certificate tracker: SUPPORTED / REUSE / HOLD / WAKE
+```
+
+Main files:
+
+```text
+experiments/cc0a_invalidation_census.py
+experiments/cc0a_webcam_gui.py
+experiments/cc0a3_local_spectral_field_gui.py
+experiments/cc0a3b_local_spectral_field_fixednorm_gui.py
+experiments/cc0a3c_scale_certificate_gui.py
 experiments/cc0a3d_certificate_tracker_gui.py
-run_cc0a3d_certificate_tracker.bat
+
+notes/009_compile_math_out_of_hot_loop.md
+notes/010_invalidation_or_catastrophe.md
+notes/011_cc0a_first_receipt.md
+notes/012_cc0a2_webcam_gui.md
+notes/013_cc0a3_local_spectral_field.md
+notes/015_cc0a3c_cross_scale_persistence_certificate.md
 notes/016_cc0a3d_persistent_certificate_tracker.md
-results/2026-08-19_cc0a3c_scale_certificate_receipt.txt
+notes/017_a3d_result_router_certificate_separation.md
+
+results/2026-08-19_cc0a2_webcam_receipt.txt
+results/2026-08-19_cc0a3b_fixednorm_webcam_receipt.txt
+results/2026-08-19_cc0a3d_certificate_tracker_receipt.txt
 ```
 
-A3D takes the fixed A3C certificate:
+## Receipts that matter
+
+### A2 — real sensor invalidation survives
+
+First webcam receiver census:
 
 ```text
-multiplicity(x,y) >= 2
+raw change rate                 1.000
+ANY receiver invalid            0.422
+receiver-slot invalid fraction  0.158
+GLOBAL-OR / local opportunity    2.67x
 ```
 
-forms connected blobs on the 6x8 lattice and gives them tiny persistent track state.
+This established that raw physical change and receiver-relevant change are measurably different on a real stream.
 
-State machine:
+### A3B — spectral packets sparse internally, tiles route better
+
+First fixed-normalization spectral run:
 
 ```text
-SUPPORTED  current certificate evidence
-REUSE      supported and consequence stable
-HOLD       evidence absent, state retained <=4 frames
-WAKE       NEW / UPDATE / REACQUIRE / EXPIRE
+spectral packet wake fraction   0.0419
+spectral spatial fanout         0.2853
+plain tile spatial fanout       0.1414
+cross-scale agreement           0.8538
 ```
 
-`HOLD` is explicitly not counted as evidence. Held-only spatial fanout is measured separately.
-
-A plain tile mask gets the same tracker as an attacker.
-
-## What to inspect in the first run
+Conclusion:
 
 ```text
-certificate current fanout
-certificate belief fanout
-certificate held-only fanout
-certificate receiver WAKE fraction
-track create/expire/reacquire churn
-mean/max track age
-
-tile current fanout
-tile belief fanout
-tile receiver WAKE fraction
+naive Gabor packet field as spatial router: DEMOTED
+cross-scale structure: SURVIVES
 ```
 
-A useful result requires more than low WAKE fraction. The certificate tracker must not achieve persistence merely by retaining large unsupported regions, and it should show some advantage over the tile tracker.
+### A3C — cross-scale multiplicity predicts persistence
 
-## Kill lines
+First explicit persistence run:
 
 ```text
-tile tracker equal/better at lower fanout -> spectral certificate runtime story loses
-held-only fanout large -> HOLD is just hallucinated occupancy
-track churn high -> local state not stable
-WAKE near every decision -> no event sparsity
-benefit disappears with hold_frames=0/1 -> persistence mostly hand-coded latch
+lag      single      multi(>=2)      delta
+1f       .887        .969            +.082
+2f       .859        .953            +.094
+4f       .795        .923            +.128
+8f       .745        .839            +.094
 ```
 
-If the default run looks positive, attack `--hold-frames 0`, `1`, `4`, `8` before making a claim.
+### A3D — replication + persistent-state test
 
-## Boundary
+Second webcam run reproduced the sign at every lag:
 
-A3D still computes both visual front ends densely every frame. It is an oracle control-plane experiment, not CC0-B sparse execution and not a speed result.
+```text
+lag      single      multi(>=2)      delta
+1f       .859        .920            +.061
+2f       .801        .867            +.066
+4f       .705        .807            +.101
+8f       .717        .799            +.082
+```
 
-## Carry-forward
+So the current narrow positive result is replicated twice:
 
-> **Evidence can disappear while state remains resident, but the ledger must mark the difference. The next thing to earn is that this held local state reduces downstream updates without becoming a larger, sloppier world than the simple tile attacker.**
+> **multi-scale local wake predicts future local wake better than single-scale wake in these ordinary webcam sessions.**
+
+Do not inflate that sentence.
+
+## Important failure / boundary
+
+The multiplicity relationship is not monotone all the way to six scales.
+
+In A3D at 1 frame:
+
+```text
+m1 .859
+m2 .936
+m3 .952
+m4 .984
+m5 .992
+m6 .619
+```
+
+The all-six-scale events are a different class or a measurement artifact; reason unknown. Do not implement `confidence = multiplicity` blindly.
+
+## A3D tracker result is mixed
+
+Same simple connected-component / centroid tracker on certificate and tile masks:
+
+```text
+                               certificate      tile
+current evidence fanout          .1373           .0602
+belief fanout                    .2099           .1254
+held-only fanout                 .0726           .0652
+receiver WAKE fraction           .3996           .4378
+mean track age                  13.1f           16.6f
+created / expired               38 / 37         30 / 29
+reacquired                       53              66
+```
+
+Event counts:
+
+```text
+certificate: NEW38 UPDATE71 REACQUIRE53 REUSE39 HOLD260 EXPIRE37
+tile:        NEW30 UPDATE93 REACQUIRE66 REUSE17 HOLD263 EXPIRE29
+```
+
+Interpretation:
+
+- certificate gets modestly fewer downstream WAKEs (~8.7% relative reduction);
+- it gets more REUSE and fewer UPDATE/REACQUIRE events;
+- but it occupies much more spatial state, has shorter average tracks and more create/expire churn;
+- therefore A3D is **not an overall win** over tiles.
+
+## Architectural update
+
+Do not ask one representation to do every job.
+
+Current best decomposition:
+
+```text
+CHEAP ROUTER
+raw delta / plain spatial tiles
+    -> where should we even look?
+
+RICHER CERTIFICATE
+cross-scale / multiscale local agreement
+    -> does this event deserve persistence / trust?
+
+PERSISTENT LOCAL STATE
+small consequence / track / belief
+    -> can remain resident without current support
+
+RECEIVER EVENT
+WAKE only when persistent consequence materially changes
+```
+
+This is the important conceptual state of the project.
+
+The spectral field may be a **teacher/verifier**, not the runtime substrate.
+
+## Why this relates back to the conceptual arc
+
+The original image was of physical units that:
+
+> communicate, yet hold their belief.
+
+A3D gives a tiny non-mystical software instance:
+
+```text
+SUPPORTED  = current sensory evidence
+HOLD       = persistent state without current evidence
+REACQUIRE  = evidence returns
+WAKE       = consequence changes enough to tell someone else
+```
+
+That is useful because it separates support, belief and communication.
+
+Do not call this a brain model. HOLD=4 is hand-coded and the tracker is ordinary.
+
+## Main next hard gate — A3E / first exploitability gate
+
+The original goal was faster computation, so the next move should finally stop evaluating the expensive spectral verifier globally.
+
+Candidate pipeline:
+
+```text
+raw / tile local delta
+      -> candidate cells (+ fixed neighborhood)
+      -> evaluate multiscale verifier ONLY for candidates
+      -> approximate dense certificate teacher
+      -> update persistent local state
+      -> emit receiver WAKE only on consequence change
+```
+
+Dense Gabor/multiscale processing remains available in parallel only as an oracle teacher during the experiment.
+
+### Measure
+
+```text
+candidate fanout
+certificate recall vs dense teacher
+certificate precision / false misses
+persistent-event recall
+local verifier calls
+front-end wall time
+receiver WAKEs
+belief fanout
+track churn
+```
+
+### Mandatory attackers
+
+```text
+tile-only tracker
+dense spectral certificate tracker
+simple Gaussian/Laplacian/DoG image pyramid
+raw-delta local verifier
+```
+
+The simple image-pyramid attacker is especially important because A3C/A3D support **multiscale agreement**, not frequency/Gabor specificity.
+
+### Kill
+
+Kill the routed spectral verifier if:
+
+```text
+certificate recall requires touching most cells
+OR
+local patch overhead erases wall-time savings
+OR
+simple image pyramid gives the same persistence signal more cheaply
+OR
+tile-only state is equal/better at matched quality
+```
+
+## Secondary next gate — remove arbitrary HOLD=4
+
+A3C/A3D already estimate survival probabilities conditioned on certificate class.
+
+Later, replace fixed `HOLD_FRAMES=4` with a calibrated survival/hazard rule, but only after the certificate can be obtained cheaply.
+
+## Epistemic boundary
+
+Keep these separate:
+
+```text
+sensor support        what is externally constrained now
+persistent belief     what local state currently retains/predicts
+runtime validity      whether receiver consequence can be reused
+communication         whether downstream needs a WAKE
+```
+
+This parallels WorldModel support/provenance, but the CC0 runtime ledger is not the same as evidence lineage.
+
+## Carry-forward sentence
+
+> **Use the cheapest geometry to address a change, a richer local test to decide whether it deserves persistence, and wake downstream computation only when the persistent consequence itself becomes invalid.**
+
+## Do not claim
+
+```text
+faster AI
+runtime speedup
+Gabor superiority
+brain mechanism
+spectral field as universal substrate
+monotonic confidence with number of scales
+```
+
+What is earned so far is much narrower and more useful:
+
+> **receiver-relative invalidation exists on a real sensor stream, and cross-scale agreement carried repeatable information about local temporal persistence.**
