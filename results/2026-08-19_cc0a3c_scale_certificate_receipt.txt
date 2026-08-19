@@ -1,0 +1,29 @@
+CC0-A3C CROSS-SCALE PERSISTENCE CERTIFICATE
+========================================================================
+source                         : webcam camera 0
+frames                         : 209
+raw change rate                : 1.000000
+spectral packet wake frac      : 0.048281
+spectral spatial fanout        : 0.330329
+multi-scale (>=2) fanout       : 0.204127
+tile spatial fanout            : 0.172877
+mean scales per active cell    : 1.893942
+multi-scale share active cells : 0.451223
+cross-scale obs agreement      : +0.880227
+
+Persistence: future local wake within +/-1 spatial cell
+lag   single-scale   multi-scale   delta(multi-single)   tiles
+ 1        0.887122       0.968840             0.081717       0.882751
+ 2        0.858852       0.952541             0.093689       0.844896
+ 4        0.795200       0.922782             0.127582       0.804176
+ 8        0.744939       0.839423             0.094484       0.688952
+
+Interpretation:
+- first real webcam receipt supports the narrow prediction that >=2-scale wake is more temporally persistent than single-scale wake at 1/2/4/8 frames under this fixed +/-1-cell matching rule;
+- the positive delta is +0.082, +0.094, +0.128, +0.094 across the four lags;
+- plain tiles remain a strong attacker and are spatially sharper than the full spectral field;
+- this justifies testing cross-scale certificate blobs as persistent local state, not claiming spectral routing or runtime speed.
+
+WARNING:
+Dense Gabor and tile analyzers still run every frame.
+This receipt is not a runtime speedup result.
