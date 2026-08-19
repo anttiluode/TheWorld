@@ -1,0 +1,35 @@
+MINIMAL MATERIAL NEURON — 2026-08-19
+====================================
+
+GATE MP0 — silence costs nothing
+clocked state updates : 100,000
+lazy state updates    : 180
+update ratio          : 555.6x
+spikes                : 61
+spike times identical : True
+first spikes          : [703, 3864, 5102, 6312, 6570, 7425, 7832, 7849, 8059, 11801, 12126, 13022]
+
+GATE MP1 — geometry turns time into coincidence
+A then B asymmetric delays : [2.0]
+B then A asymmetric delays : []
+equal-delay control AB/BA  : [] / []
+
+GATE MP2 — the past survives as unrelaxed local state
+wait= 0.5 -> conditioning=1.000, probe=0.389
+wait= 2.0 -> conditioning=1.000, probe=0.494
+wait= 8.0 -> conditioning=1.000, probe=0.761
+wait=32.0 -> conditioning=1.000, probe=0.988
+probe response monotone with age: True
+
+GATE MP3 — nominal sparse-body operation count
+clocked compartment ticks : 51,200,000
+lazy touched states       : 2,500
+nominal update ratio      : 20,480x
+
+BOUNDARIES
+----------
+- MP0 is exact only for this simple exponential-decay model where upward threshold crossings occur on event arrivals.
+- MP1 is ordinary delay-line / coincidence detection, not a novelty claim.
+- MP2 is a Tsodyks-Markram-like local resource trace, not a novelty claim.
+- MP3 is an operation-count illustration, NOT a GPU benchmark. Irregular sparse event code may underutilize normal GPUs.
+- No claim here establishes biological equivalence. The purpose is to identify a minimal causal grammar worth benchmarking.
