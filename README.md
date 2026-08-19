@@ -52,7 +52,10 @@ The word *subspace* is deliberately not used globally. A nonlinear observation m
 
 - `notes/009_compile_math_out_of_hot_loop.md` — cross-repo synthesis: validity sparsity + causal-frontier sparsity + receiver sparsity + operator lowering; receiver-relative invalidation; full runtime cost bill; CC0.
 - `notes/010_invalidation_or_catastrophe.md` — why one global change gate collapses as a large world grows; receiver-local validity scaling; CC0-A invalidation sparsity census.
-- `HANDOFF_2026-08-19_COMPILE_HOT_LOOP.md` — current detailed handoff and prior-art collision.
+- `notes/011_cc0a_first_receipt.md` — first executed invalidation census; positive opportunity receipt on simple encoded video, with hard no-speedup boundary.
+- `experiments/cc0a_invalidation_census.py` — dense oracle census, cached receiver tolerances, invalidation matrix, equal-cost GLOBAL-OR/local comparison and tolerance sweep.
+- `results/2026-08-19_cc0a_encoded_video.txt` — frozen CC0-A1 outputs and source hashes.
+- `HANDOFF_2026-08-19_CC0A1.md` — current experiment handoff.
 - `HANDOFF_CURRENT.md` — rolling current state.
 
 ---
@@ -154,6 +157,35 @@ See `notes/010_invalidation_or_catastrophe.md`.
 
 ---
 
+## First measured opportunity receipt — CC0-A1
+
+The first census is now executed rather than hypothetical.
+
+On a pre-existing 901-frame rotating-globe MP4, at tolerance scale `0.35`:
+
+```text
+raw frame changed              100.00%
+ANY receiver invalid            12.44%
+receiver slots invalid/frame     1.202%
+GLOBAL-OR / oracle-local work    10.35x
+```
+
+Across tolerance scales `0.15 -> 1.0`, the equal-cost GLOBAL-OR/local ratio stayed about `9.73x -> 11.00x`.
+
+This is **not a runtime speedup**. The dense oracle computed all 11 receiver outputs on every frame; no guard, routing, metadata, memory traffic, refresh or wall-clock cost has been paid. The source is also a simple rendered media asset, not a natural driving/DVS/WorldSplat stream.
+
+Therefore:
+
+```text
+CC0-A1 instrument/opportunity: PASS
+CC0-A2 real external stream:   NEXT
+CC0-B cheap sparse runtime:    BLOCKED until A2
+```
+
+See `notes/011_cc0a_first_receipt.md` and the frozen result file.
+
+---
+
 ## House rules
 
 Keep these distinctions separate:
@@ -171,21 +203,25 @@ A compelling internal world is allowed to be wrong. A tiny receiver is allowed t
 
 ## Main next hard gate
 
-`CC0 — Compiled Consequence Gate 0`
+`CC0-A2 — real-stream invalidation sparsity census`
 
-Before implementing the full runtime, run:
+Repeat the dense oracle census on a stream where locality and useful consequences come from a genuinely external process.
 
-### `CC0-A — invalidation sparsity census`
-
-On a real changing stream:
+Preferred order:
 
 ```text
-run the rich teacher offline on every step
-choose several narrow receivers
-record their true consequences
-set task-meaningful tolerances
-mark which receivers actually become invalid each step
-measure global-any vs per-receiver vs cluster invalidation
+1. NeuromorphicDVSplusEMDfield + webcam/recorded real motion
+2. real outdoor/driving video
+3. WorldSplat after the current ray-fix A/B finishes
+```
+
+Use task-relevant receivers such as:
+
+```text
+near-field collision / occupancy
+left-right motion
+tracked-object continuity
+route obstruction
 ```
 
 Only proceed if:
@@ -198,15 +234,9 @@ AND
 an event invalidates only a small receiver cluster
 ```
 
-If that opportunity exists, then `CC0-B` learns/derives cheap guards and routing that approximate the oracle invalidation matrix without running the teacher.
+If CC0-A2 passes, then `CC0-B` learns/derives cheap guards and routing that approximate the oracle invalidation matrix without running the teacher.
 
-Immediate candidate substrate: `NeuromorphicDVSplusEMDfield`, where locality comes from real image/event coordinates.
-
-Second substrate: the learned WorldSplat state after the current ray-fix A/B finishes. Do not retrofit the running trainer.
-
-First narrow receivers should be things like near-field collision, left/right motion, object continuity or route-relevant obstacle state rather than full RGB reproduction.
-
-Mandatory attackers include:
+Mandatory eventual attackers include:
 
 ```text
 FULL every step
@@ -217,21 +247,7 @@ tiny always-on GRU/SSM/MLP
 serious delta/incremental baseline where possible
 ```
 
-The receiver-aware runtime must pay for:
-
-```text
-change detection
-candidate discovery
-routing / queueing
-metadata / indices
-local state updates
-receiver work
-teacher refreshes
-memory traffic
-synchronization
-recovery after drift
-actual CPU/GPU wall time
-```
+The receiver-aware runtime must pay for change detection, candidate discovery, routing/queueing, metadata/indices, local state updates, receiver work, teacher refreshes, memory traffic, synchronization, recovery after drift, and actual CPU/GPU wall time.
 
 If it wins only in nominal operation count, it loses.
 
@@ -247,8 +263,8 @@ The candidate contribution to earn is narrower: a joint compiler/runtime that di
 
 ---
 
-> **A large world is almost never globally unchanged. The scalable question is whether most individual receivers remain valid, and whether the few invalidated receivers can be found without scanning the rest.**
+> **CC0-A1 says the opportunity is measurable; CC0-A2 must show it is real; CC0-B must show it is exploitable.**
 
-> **Compile the expensive relationship once; keep its useful consequence resident; wake only the receivers whose distinguishable world actually changed; and make the proof that they can sleep cheaper than waking them.**
+> **A large world is almost never globally unchanged. The scalable question is whether most individual receivers remain valid, and whether the few invalidated receivers can be found without scanning the rest.**
 
 Do not hype. Do not lie. Keep attacking.
