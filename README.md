@@ -8,9 +8,13 @@ The repo began from:
 
 > **Each unit has a small nonlinear observation map into a vastly richer surrounding state.**
 
-The current dynamic refinement is:
+The dynamic refinement became:
 
 > **Each receiver may require only a low-order realization of the surrounding world's dynamics. Compile that receiver into the cheapest local causal primitives that preserve the consequences it actually needs.**
+
+The newest systems refinement is:
+
+> **Do not recompute a consequence merely because its inputs changed. Recompute only when the change can cross that receiver's distinguishability boundary, and make the certificate and routing cheaper than the work they suppress.**
 
 The word *subspace* is deliberately not used globally. A nonlinear observation map has fibers / indistinguishable sets; only its local differential has a literal linear row-space and nullspace.
 
@@ -44,25 +48,28 @@ The word *subspace* is deliberately not used globally. A nonlinear observation m
 - `experiments/receiver_specific_hankel_gate.py` — one 6-state world, receiver Hankel ranks 1 / 2 / 1 / 6.
 - `results/2026-08-19_receiver_specific_realization.txt` — frozen output and interpretation.
 
-### 5. Current handoff
+### 5. Receiver-aware incremental runtime
 
-- `HANDOFF_2026-08-19_FLOW_JUMP_RECEIVER_REALIZATION.md` — current synthesis, primitive price list, receiver compiler, WorldSplat bridge and MP3 primitive-auction plan.
+- `notes/009_compile_math_out_of_hot_loop.md` — cross-repo synthesis: validity sparsity + causal-frontier sparsity + receiver sparsity + operator lowering; receiver-relative invalidation; full runtime cost bill; CC0.
+- `HANDOFF_2026-08-19_COMPILE_HOT_LOOP.md` — current detailed handoff and prior-art collision.
 - `HANDOFF_CURRENT.md` — rolling current state.
 
 ---
 
 ## Current architecture hypothesis
 
-Do not give every unit the same internal dynamics.
+Do not give every unit the same dynamics, and do not wake every unit merely because some upstream state changed.
 
-A candidate path is:
+Candidate path:
 
 ```text
-rich persistent world
+rich persistent world / teacher
         ↓
-receiver-specific observation map
+receiver-specific observation geometry
         ↓
-receiver-specific information geometry
+receiver-specific validity / distinguishability boundary
+        ↓
+cheap guard + locally discoverable causal frontier
         ↓
 receiver-specific temporal consequence map
         ↓
@@ -71,9 +78,11 @@ effective Hankel spectrum / minimal realization degree
 compile to cheapest local primitives
         ↓
 sparse event execution
+        ↓
+full refresh only when local validity fails
 ```
 
-Candidate primitive library:
+Candidate primitive library remains:
 
 ```text
 DELAY(d)
@@ -86,7 +95,29 @@ RESET / REFRACT
 ADAPT
 ```
 
-Nothing here is universal. Every block has to earn its resource cost.
+Nothing here is universal. Every block, guard, index and routing mechanism has to earn its resource cost.
+
+---
+
+## Four ways not to compute
+
+The repo family already contains separate ancestors for four different savings:
+
+```text
+TheClutch2 / Fusion1
+    REUSE a still-valid expensive consequence
+
+DifferentMachine
+    DON'T TOUCH quiet/unreached persistent state
+
+SplatNeuron / observer geometry
+    DON'T TELL a receiver about distinctions it cannot use
+
+KYY / TWC / FunctionalArbors / ArborVerb
+    EXECUTE A CHEAPER BODY after learning/identification
+```
+
+The current job is not to re-prove these independently. It is to combine them and measure the whole systems bill.
 
 ---
 
@@ -98,31 +129,68 @@ Keep these distinctions separate:
 2. **observability/support** — which directions were actually constrained by external measurements;
 3. **source/intervention lineage** — where evidence came from and whether the model's own actions partly generated it;
 4. **receiver compression** — how small a local realization can preserve the consequences relevant to one consumer;
-5. **internal queries / imagination** — operations on belief that are not new evidence.
+5. **runtime validity** — whether a cached receiver consequence can still be reused after the world changes;
+6. **internal queries / imagination** — operations on belief that are not new evidence.
 
-A compelling internal world is allowed to be wrong. A tiny receiver is allowed to inherit a huge prior. The bookkeeping must still say where the system is weakly externally anchored.
+A compelling internal world is allowed to be wrong. A tiny receiver is allowed to inherit a huge prior. A cached result is allowed to remain valid while upstream state changes. The bookkeeping must still say why.
 
 ---
 
-## Next hard gate
+## Main next hard gate
 
-`MP3 — primitive auction`
+`CC0 — Compiled Consequence Gate 0`
 
-Optimize task quality jointly with explicit costs for state count, event operations and communication. Test whether different task families actually select different cheap primitives:
+Question:
+
+> **Can receiver-relative invalidation plus persistent local state avoid real work at matched task quality after paying for detection, routing, metadata and refresh?**
+
+Immediate candidate substrate: `NeuromorphicDVSplusEMDfield`, where locality comes from real image/event coordinates.
+
+Second substrate: the learned WorldSplat state after the current ray-fix A/B finishes. Do not retrofit the running trainer.
+
+First narrow receivers should be things like near-field collision, left/right motion, object continuity or route-relevant obstacle state rather than full RGB reproduction.
+
+Mandatory attackers include:
 
 ```text
-coincidence      -> DELAY / WINDOW
-recency          -> RELAX
-history context  -> RESOURCE
-oscillation      -> ROTATE
+FULL every step
+make/dependency invalidation
+raw-delta threshold
+global Clutch gate
+tiny always-on GRU/SSM/MLP
+serious delta/incremental baseline where possible
 ```
 
-Attack with matched compact GRU/LSTM/TCN/state-space/spiking baselines and actual runtime measurements.
+The receiver-aware runtime must pay for:
 
-If a conventional compact recurrent/state-space model wins the resource frontier, the material-ISA story loses.
+```text
+change detection
+candidate discovery
+routing / queueing
+metadata / indices
+local state updates
+receiver work
+teacher refreshes
+memory traffic
+synchronization
+recovery after drift
+actual CPU/GPU wall time
+```
+
+If it wins only in nominal operation count, it loses.
+
+`MP3 — primitive auction` remains a component test for deciding when DELAY/WINDOW/RELAX/RESOURCE/ROTATE are worth buying; it is no longer the main architecture gate.
 
 ---
 
-> **The mathematics may be the external compressed description of a causal material program, not the symbolic algorithm executed by that material. The useful artificial question is whether we can identify the smallest receiver-specific dynamics and compile them into cheaper local causal operations.**
+## Prior-art boundary
+
+Do not claim invention of memoization, self-adjusting/incremental computation, change propagation, delta inference, conditional computation, model reduction, balanced truncation, knowledge distillation, event-driven state-space execution or structured recurrence.
+
+The candidate contribution to earn is narrower: a joint compiler/runtime that discovers receiver-specific validity, locally discoverable causal frontiers and cheap realizations, then demonstrates a real accuracy–latency–memory/energy frontier advantage over strong ordinary baselines.
+
+---
+
+> **Compile the expensive relationship once; keep its useful consequence resident; wake only the receivers whose distinguishable world actually changed; and make the proof that they can sleep cheaper than waking them.**
 
 Do not hype. Do not lie. Keep attacking.
