@@ -1,24 +1,31 @@
 # TheWorld — current handoff
 
 **Date:** 2026-08-19  
-**State:** receiver-aware self-adjusting execution / “compile the math out of the hot loop.” `CC0-A1` has now been executed. It is a positive opportunity receipt on simple encoded video, **not** a runtime-speed result. No novelty claim.
+**State:** receiver-aware self-adjusting execution / “compile the math out of the hot loop.” Real webcam opportunity receipts now exist. The current branch is testing whether **cross-scale agreement can act as a local persistence certificate**, not whether Gabor packets themselves are a speed win. No novelty claim.
 
-Current detailed files:
+Current files:
 
 - `notes/009_compile_math_out_of_hot_loop.md`
 - `notes/010_invalidation_or_catastrophe.md`
 - `notes/011_cc0a_first_receipt.md`
+- `notes/012_cc0a2_webcam_gui.md`
+- `notes/013_cc0a3_local_spectral_field.md`
+- `notes/015_cc0a3c_cross_scale_persistence_certificate.md`
 - `experiments/cc0a_invalidation_census.py`
-- `results/2026-08-19_cc0a_encoded_video.txt`
-- `HANDOFF_2026-08-19_CC0A1.md`
+- `experiments/cc0a_webcam_gui.py`
+- `experiments/cc0a3_local_spectral_field_gui.py`
+- `experiments/cc0a3b_local_spectral_field_fixednorm_gui.py`
+- `experiments/cc0a3c_scale_certificate_gui.py`
+- `results/2026-08-19_cc0a2_webcam_receipt.txt`
+- `results/2026-08-19_cc0a3b_fixednorm_webcam_receipt.txt`
 
 ---
 
 ## One-line state
 
-> **Keep a rich learned machine persistent; reuse consequences while they remain valid; touch only locally discoverable causal frontiers; wake only receivers whose distinguishable world changed; and execute the smallest cheap realization those receivers actually need.**
+> **The world changing is not the computational event. A receiver consequence becoming invalid is the event; cross-scale agreement is now being tested as one possible local certificate for whether a visual consequence deserves to persist.**
 
-The four older repo lines remain the decomposition:
+The broader decomposition remains:
 
 ```text
 TheClutch2 / Fusion1      validity sparsity
@@ -27,159 +34,161 @@ SplatNeuron               receiver sparsity
 KYY/TWC/Arbors/ArborVerb  operator lowering
 ```
 
-The unearned part is their end-to-end combination with honest control-plane cost.
+The unearned part is still end-to-end combination with honest control-plane cost.
 
 ---
 
-## Receiver-relative invalidation
+# Receipts so far
 
-For `y_i = h_i(x)` and local state change `delta x`:
+## CC0-A1 — encoded video opportunity
 
-\[
-\delta y_i \approx J_i\delta x.
-\]
+On a 901-frame rotating-globe clip at tolerance scale `0.35`:
 
-A changed dependency does not necessarily invalidate receiver `i`. A cached receiver output may sleep while the world moves inside an approximate equivalence/tolerance region for that receiver.
+```text
+raw frame changed              100.00%
+ANY receiver invalid            12.44%
+receiver slots invalid/frame     1.202%
+GLOBAL-OR / oracle-local work    10.35x
+```
 
-That yields the runtime question:
+This was an oracle skip-opportunity result only.
 
-> **Could this world change move this receiver's answer outside its tolerated equivalence class?**
+## CC0-A2 — first real webcam receiver census
 
-The guard must be cheaper than waking.
+```text
+frames                         297
+raw change rate                1.000000
+ANY receiver invalid           0.422297
+receiver-slot wake fraction    0.158170
+GLOBAL-OR/local opportunity     2.670x
+```
+
+So receiver-relative invalidation remained sparser than raw camera change on a real sensor stream.
+
+## CC0-A3/A3B — localized spectral field + tile attacker
+
+A3 introduced a 6-scale × 4-orientation localized Gabor bank pooled to a 6×8 spatial grid. A3's framewise q95 normalization accidentally created a hidden global dependency, so A3B fixed one normalization scale per spectral channel from the first frame.
+
+First A3B webcam receipt:
+
+```text
+raw change rate                 1.000000
+spectral packet wake fraction   0.041860
+spectral spatial fanout         0.285272
+plain tile wake fraction        0.085963
+plain tile spatial fanout       0.141399
+cross-scale agreement           0.853757
+mean bundle count               5.708
+largest bundle share            0.605
+```
+
+Interpretation:
+
+- individual spectral packets are sparse inside the large 1152-state representation;
+- however plain spatial tiles are currently much sharper spatial routers (~14% vs ~29% fanout);
+- therefore **naive Gabor packet routing is not presently winning**;
+- the strong surviving observation is repeated activity at the same physical location across several scales.
+
+The spectral story is therefore demoted from “packets may be a better router” to:
+
+> **Cross-scale redundancy may be a local persistence/validity signal.**
 
 ---
 
-# CC0-A1 — executed
+# Main next gate — CC0-A3C
 
-`experiments/cc0a_invalidation_census.py` densely evaluates 11 receiver consequences on every frame but gives every receiver an independent cached value. A receiver is marked invalid only when its current output has moved beyond its tolerance from that cache.
+`experiments/cc0a3c_scale_certificate_gui.py`
 
-This is an **oracle census**. It labels skip opportunities; it does not skip the oracle computation itself.
+Run:
 
-### Main stream
-
-Pre-existing encoded `world.mp4` asset:
-
-```text
-frames                         901
-raw frame changed              1.0000
-ANY receiver invalid           0.1244
-mean receivers invalid/frame   0.1322 / 11
-receiver-slot invalid fraction 0.01202
+```bat
+run_cc0a3c_scale_certificate.bat
 ```
 
-Equal receiver-cost opportunity comparison:
+A3C keeps physical x/y fixed and computes
 
 ```text
-GLOBAL OR:
-  any invalid -> execute all receivers
-
-ORACLE LOCAL:
-  execute only invalid receivers
-
-GLOBAL-OR / oracle-local receiver work = 10.35x
+m(x,y) = number of spectral scales that wake at this cell
 ```
 
-### Tolerance attack
+with `m in 0..6`.
 
-Tolerance scales `0.15, 0.25, 0.35, 0.50, 0.75, 1.00` gave GLOBAL-OR/local ratios:
+The GUI now shows:
 
 ```text
-9.73x, 9.96x, 10.35x, 10.24x, 11.00x, 11.00x
+cross-scale multiplicity map at fixed x,y
+>=2-scale certificate map
+plain tile wake map
+selected spectral scale
+live persistence table
 ```
 
-So the relative OR/local gap is not a single-epsilon cherry-pick on this stream.
+### Killable prediction
 
-A different sparse title-animation asset produced a smaller roughly `2.68x -> 5.68x` range depending on tolerance, which is a useful reminder that the ratio is stream/receiver dependent.
-
-### Decision
+For source events of multiplicity 1,2,...,6, measure whether future spectral wake exists at the same spatial cell or one neighboring cell after:
 
 ```text
-CC0-A1 instrument/opportunity   PASS
-CC0-A2 real external stream     NEXT
-CC0-B cheap sparse runtime      BLOCKED until A2
+1, 2, 4, 8 frames
 ```
+
+The primary comparison is:
+
+```text
+P(future local wake | multiplicity >= 2)
+vs
+P(future local wake | multiplicity = 1)
+```
+
+A useful certificate should produce a positive multi-minus-single persistence delta across several lags with enough support. Stronger evidence would show persistence increasing with multiplicity.
+
+Plain tiles receive the same future-local-wake measurement as an attacker.
+
+### Kill lines
+
+Demote/kill the cross-scale certificate if:
+
+```text
+multi-scale wake does not persist more than single-scale wake
+OR
+advantage exists only at 1 frame and disappears immediately
+OR
+support counts are too small
+OR
+plain tile temporal persistence explains the same effect more simply
+```
+
+Even a kill here does not kill CC0; it only kills this proposed visual certificate.
 
 ---
 
-## What CC0-A1 does NOT establish
+## Important boundary
 
-Do not say:
+A3/A3B/A3C are still **dense oracle instruments**. The entire Gabor bank and tile baseline run every frame.
 
-```text
-10x faster AI
-83x faster AI
-GPU speedup
-energy speedup
-natural visual sparsity
-learned receiver geometry
-```
-
-The dense oracle computed all receivers. No guard, routing, candidate discovery, metadata, memory traffic, teacher refresh, compact baseline or wall-clock saving was measured. The source videos are simple rendered media, not a natural driving/DVS/WorldSplat stream. Several motion receivers are nearly inactive on the globe clip.
-
-The tempting always-on/oracle-local ratio is therefore bookkeeping only, not a headline.
-
----
-
-# Main next gate — CC0-A2
-
-Repeat the same dense census where locality and receiver semantics come from a real external process.
-
-Preferred substrate order:
+No claim yet of:
 
 ```text
-1. NeuromorphicDVSplusEMDfield + webcam/recorded real motion
-2. real outdoor/driving video
-3. WorldModel / WorldSplat after the current ray-fix run finishes
+runtime speedup
+GPU win
+energy win
+learned sparse routing
+brain mechanism
 ```
 
-Do not modify the running WorldModel training gate.
-
-Use task consequences:
+The systems gate after any successful certificate result remains:
 
 ```text
-near-field occupancy / collision
-left-right motion
-tracked-object continuity
-route obstruction
+cheap guard / candidate discovery
+ -> local routing
+ -> persistent receiver state
+ -> real skipped work
+ -> actual CPU/GPU wall-clock comparison
 ```
 
-A useful real-stream gate should show:
-
-```text
-world/input changes often
-BUT
-most individual receiver consequences remain valid
-AND
-an event addresses only a small receiver cluster
-```
-
-If that pattern is absent, stop the receiver-aware speed story for that substrate.
-
-If it survives, then build CC0-B:
-
-```text
-oracle invalidation matrix
- -> cheap guard
- -> locally discoverable candidate set
- -> receiver-local wake
- -> compact/reduced receiver implementation
- -> teacher refresh on certificate failure
-```
-
-and attack actual wall time, memory traffic and drift recovery against FULL, dependency/make, raw delta, global Clutch, tiny always-on GRU/SSM/MLP, and serious incremental/delta inference.
-
----
-
-## Parallel epistemic ledger remains separate
-
-`WorldModel` support/provenance asks **why a belief is allowed to count as externally earned**.
-
-CC0 asks **why a computation is allowed to sleep**.
-
-Do not merge those ledgers.
+against FULL, make/dependency invalidation, raw delta, global Clutch, plain tiles, tiny always-on GRU/SSM/MLP, and serious incremental/delta baselines.
 
 ---
 
 ## Carry-forward sentence
 
-> **CC0-A1 says the opportunity is measurable; CC0-A2 must show it is real; CC0-B must show it is exploitable.**
+> **The packet may not be the useful unit. The candidate unit is now a persistent cross-scale bundle: several spectral manifestations at one place whose agreement may predict that the underlying consequence deserves to stay alive.**
