@@ -1,0 +1,46 @@
+THEWORLD — RECEIVER-SPECIFIC MINIMAL REALIZATION — 2026-08-19
+
+Toy world
+====================================================================
+One shared stable 6-state linear world:
+- one slow scalar relaxation mode
+- one fast scalar relaxation mode
+- one damped 2-state rotational mode
+- one second damped 2-state rotational mode
+
+One impulse excites all six modes. Four receivers read different consequences.
+
+Measured Hankel ranks / leading singular values
+====================================================================
+slow-only receiver
+  rank = 1
+  [14.200, 0, 0, 0, 0, 0]
+
+oscillation-only receiver
+  rank = 2
+  [4.670, 4.582, 0, 0, 0, 0]
+
+fast-only receiver
+  rank = 1
+  [1.333, 0, 0, 0, 0, 0]
+
+mixed receiver
+  rank = 6
+  [8.417, 2.634, 2.404, 0.508, 0.300, 0.054]
+
+Verdict
+====================================================================
+Same world, different receiver, different required dynamical degree.
+
+This is standard linear-systems realization theory, not a new theorem. Its role in this repo is to replace the vague sentence "each receiver has a small piece of the world" with a measurable question:
+
+  what is the smallest dynamical realization that preserves every consequence
+  of the world that can reach this receiver?
+
+For exact finite-dimensional LTI systems the Hankel rank gives the minimal realization order under the usual controllability/observability conditions. In learned/noisy systems use the Hankel singular-value spectrum / approximate degree rather than brittle exact rank.
+
+Carry-forward test for WorldSplat / TinyAvatar:
+- estimate empirical receiver-specific Hankel spectra;
+- compare RGB, depth, motion, collision, pose, identity, etc.;
+- if all spectra stay broad/full, the receiver-compression story loses;
+- if some collapse sharply, compile those receivers into cheaper FLOW/JUMP blocks.
