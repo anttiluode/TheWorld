@@ -1,0 +1,66 @@
+2026-08-19 headless smoke results
+=================================
+
+GATE 1 — INTRINSIC DIMENSIONALITY
+---------------------------------
+seed=19082026
+samples=20000
+radius=0.10
+target coverage=0.95
+
+2D sheet      : 49 centres, coverage=0.99980
+same sheet 3D : 49 centres, coverage=0.99980
+3D volume     : 343 centres, coverage=0.95835
+volume/sheet centre ratio = 7.000x
+
+Interpretation:
+This is a covering-number illustration, not neuroscience evidence. Embedding a
+2-D behavioral sheet in 3-D does not impose a 3-D covering cost. A genuinely
+volumetric state space does, at fixed local resolution.
+
+
+GATE 2 — ENDOGENOUS EVIDENCE
+----------------------------
+seeds=1000
+T=500
+alpha=0.05
+sigma=0.25
+mu0=0.20
+true theta=0
+
+beta=0.8 naive    mean=+0.00300 std=0.08704 |mu|>.30=0.000
+beta=0.8 corrected mean=+0.00058 std=0.04110 |mu|>.30=0.000
+beta=1.0 naive    mean=+0.10613 std=0.19317 |mu|>.30=0.180
+beta=1.0 corrected mean=+0.00058 std=0.04110 |mu|>.30=0.000
+beta=1.2 naive    mean=+0.75314 std=0.21246 |mu|>.30=0.994
+beta=1.2 corrected mean=+0.00058 std=0.04110 |mu|>.30=0.000
+beta=1.5 naive    mean=+1.28719 std=0.05217 |mu|>.30=1.000
+beta=1.5 corrected mean=+0.00058 std=0.04110 |mu|>.30=0.000
+
+Mean-field equation for naive noiseless loop:
+    mu = beta*tanh(mu)
+At beta > 1 the zero fixed point becomes unstable and nonzero self-confirming
+attractors appear. Conditioning on the known action-induced term removes the
+feedback in this toy.
+
+Stop line: causal-feedback toy only; not a clinical/social model.
+
+
+GATE 3 — LOCAL PHYSICS OPERATOR
+-------------------------------
+N=201
+eta=0.20
+steps=40
+
+mass=1.0000000000000002
+measured variance=16.00000000
+expected 2*eta*T=16.00000000
+L1 vs matched Gaussian=0.00142042
+corr vs matched Gaussian=0.999999160
+
+Interpretation:
+Each site exchanges state only with immediate neighbors. No site evaluates a
+Gaussian kernel or dense matrix. Repeated local causation produces a global
+Gaussian-like smoothing operator. This is standard diffusion and is included
+only to make the physical-implementation-versus-mathematical-description
+point concrete.
